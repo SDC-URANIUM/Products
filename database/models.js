@@ -9,9 +9,11 @@ module.exports = {
     });
   }
 
-  // getProductPages: function({ count, page } , callback) {
-  //   db.query('SELECT * FROM "Products" LIMIT')
-  // }
+  // getProductPages: function() {}
+
+  // getProductInfo: function() {}
+
+  // getStyles: function() {}
 }
 
 // need to check my callback error handling
