@@ -8,6 +8,10 @@ module.exports = {
       callback(err, data);
     });
   }
+
+  // getProductPages: function({ count, page } , callback) {
+  //   db.query('SELECT * FROM "Products" LIMIT')
+  // }
 }
 
 // need to check my callback error handling

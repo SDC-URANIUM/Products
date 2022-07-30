@@ -8,16 +8,30 @@ app.use(express.json());
 
 // return a 'page' of individual product info objects
 // tables: products
-app.get('/products', (req, res) => {
-  const count = req.query.count;
-  const page = req.query.page;
-  res.send(200, `${req.query.page} ${req.query.count} was sent to the API route products`)
+app.get('/products', async (req, res) => {
+  let { count, page } = req.query;
+  (!count) ? count = 5 : count = count;
+  (!page) ? page = 0 : page = (page - 1) * count;
+  try {
+    const results = await db.query('SELECT * FROM "Products" LIMIT $1 OFFSET $2', [count, page]);
+    res.send(results.rows)
+  } catch (err) {
+    console.log('🟥There was an error querying for products', err);
+  }
+  // res.send(200, `${req.query.page} ${req.query.count} was sent to the API route products`)
 });
 
 // return an individual product info object with 1 more property 'features': an array of individual feature objects
 // tables: products, features
-app.get('/products/:product_id', (req, res) => {
-  res.send(200, `${req.params.product_id} was sent to the API route products info`)
+app.get('/products/:product_id', async (req, res) => {
+  try {
+    const { product_id } = req.params;
+    const results = await db.query('SELECT * FROM "Products" JOIN "Features" ON products.product_id = $1 AND features.product_id = $1', [product_id]);
+    res.send(results.rows[0]);
+  } catch (err) {
+    console.log('🟥There was an error querying for a product\'s info:', err);
+  }
+  // res.send(200, `${req.params.product_id} was sent to the API route products info`)
 });
 
 // return an object that is kind of complex, check API docs for structure
@@ -44,7 +58,7 @@ app.get('/products/:product_id/related', async (req, res) => {
     const results = await db.query('SELECT ARRAY(SELECT related_product_id::text FROM "Related" WHERE current_product_id = $1)', [ product_id ]);
     res.send(results.rows[0].array);
   } catch (err) {
-    console.log(err);
+    console.log('🟥There was an error querying for related products:', err);
   }
 });
 
