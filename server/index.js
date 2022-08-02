@@ -49,15 +49,15 @@ app.get('/products/:product_id/styles', async (req, res) => {
             "original_price",
             "sale_price",
             "default?",
-
             (SELECT JSON_AGG("test1")
               FROM
                 (SELECT "thumbnail_url",
                     "url"
                   FROM "Photos"
-                  WHERE "style_id" IN (SELECT "style_id" FROM "Styles" WHERE "product_id" = $1)) AS "test1") AS "Photos"
-          FROM "Styles"
-          WHERE PRODUCT_ID = $1) AS "stylez") AS "Results"
+                  WHERE "style_id" IN (SELECT "style_id" FROM "Styles" WHERE "product_id" = $1)) AS "test1") AS "photos",
+            (SELECT jsonb_object_agg("id", (SELECT to_jsonb("dog") FROM (SELECT "size", "quantity" FROM "SKUs" WHERE "id" = "cat"."id") AS "dog")) FROM "SKUs" AS "cat" WHERE "style_id" = "magic"."style_id") AS "skus"
+          FROM "Styles" AS "magic"
+          WHERE PRODUCT_ID = $1) AS "stylez") AS "results"
   FROM "Styles"
   WHERE PRODUCT_ID = $1
   LIMIT 1`, [product_id]);
