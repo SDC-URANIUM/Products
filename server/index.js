@@ -37,8 +37,35 @@ app.get('/products/:product_id', async (req, res) => {
 
 // return an object that is kind of complex, check API docs for structure
 // tables: styles, photos, skus
-app.get('/products/:product_id/styles', (req, res) => {
-  res.send(200, `${req.params.product_id} was sent to the API route styles`)
+app.get('/products/:product_id/styles', async (req, res) => {
+  try {
+    const { product_id } = req.params;
+    // const results = await db.query('select product_id, (select json_agg("stylez") from (select style_id, "name", "original_price", "sale_price", "default?" from "Styles" where product_id = $1) as "stylez") as "Results" from "Styles" where product_id = $1 limit 1', [product_id]);
+    const results = await db.query(`SELECT PRODUCT_ID,
+    (SELECT JSON_AGG("stylez")
+      FROM
+        (SELECT STYLE_ID,
+            "name",
+            "original_price",
+            "sale_price",
+            "default?",
+
+            (SELECT JSON_AGG("test1")
+              FROM
+                (SELECT "thumbnail_url",
+                    "url"
+                  FROM "Photos"
+                  WHERE "style_id" IN (SELECT "style_id" FROM "Styles" WHERE "product_id" = $1)) AS "test1") AS "Photos"
+          FROM "Styles"
+          WHERE PRODUCT_ID = $1) AS "stylez") AS "Results"
+  FROM "Styles"
+  WHERE PRODUCT_ID = $1
+  LIMIT 1`, [product_id]);
+    res.send(results.rows[0]);
+  } catch (err) {
+    console.log('🟥There was an error querying for a product\'s styles:', err)
+  }
+  // res.send(200, `${req.params.product_id} was sent to the API route styles`)
 });
 
 // return an array of products related to queried product_id
