@@ -27,7 +27,7 @@ app.get('/products/:product_id', async (req, res) => {
   try {
     const { product_id } = req.params;
     // const results = await db.query('SELECT * FROM "Products" JOIN "Features" ON "Products".product_id = "Features".product_id WHERE "Products".product_id = $1', [product_id]);
-    const results = await db.query('SELECT *, (SELECT json_agg("feature1") FROM (SELECT "feature", "value" FROM "Features" WHERE product_id = $1) AS "feature1") AS "Features" FROM "Products" WHERE product_id = $1 ', [product_id]);
+    const results = await db.query('SELECT *, (SELECT json_agg("feature1") FROM (SELECT "feature", "value" FROM "Features" WHERE product_id = $1) AS "feature1") AS "features" FROM "Products" WHERE product_id = $1 ', [product_id]);
     res.send(results.rows[0]);
   } catch (err) {
     console.log('🟥There was an error querying for a product\'s info:', err);
