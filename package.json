@@ -1,0 +1,27 @@
+{
+  "name": "products",
+  "version": "1.0.0",
+  "description": "SDC - Products services",
+  "main": "server/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server-dev": "nodemon --watch ./server/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SDC-URANIUM/Products.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SDC-URANIUM/Products/issues"
+  },
+  "homepage": "https://github.com/SDC-URANIUM/Products#readme",
+  "dependencies": {
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "nodemon": "^2.0.19",
+    "pg": "^8.7.3",
+    "pg-promise": "^10.11.1"
+  }
+}
